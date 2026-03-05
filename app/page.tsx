@@ -304,15 +304,15 @@ export default function RegistrationApp() {
                   <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
                     {fakeGender === 'M' && <div className="w-full h-full bg-black rounded-full" />}
                   </div>
-                  <span className="font-bold text-[#ed7426] text-sm">Masculino</span>
+                  <span className="font-bold text-zinc-800 text-sm">Masculino</span>
                   <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('M')} />
                 </label>
                 
                 <label className="flex items-center gap-2 cursor-pointer">
                   <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
-                    {fakeGender === 'F' && <div className="w-full h-full bg-[#ed7426] rounded-full" />}
+                    {fakeGender === 'F' && <div className="w-full h-full bg-black rounded-full" />}
                   </div>
-                  <span className="font-bold text-[#ed7426] text-sm">Femenino</span>
+                  <span className="font-bold text-zinc-800 text-sm">Femenino</span>
                   <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('F')} />
                 </label>
               </div>
@@ -324,7 +324,7 @@ export default function RegistrationApp() {
                 type="submit" 
                 // Añadimos !fakeGender para que no se habilite sin seleccionar género
                 disabled={submitting || !file || !formData.fullName || !fakeGender}
-                className="w-60 py-3 px-12 bg-black text-white rounded-full font-black text-2xl uppercase tracking-widest hover:shadow-2xl active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none flex justify-center items-center gap-3"
+                className="w-50 py-3 px-12 bg-black text-white rounded-full font-black text-2xl uppercase tracking-widest hover:shadow-2xl active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none flex justify-center items-center gap-3"
               >
                 {submitting ? (
                   <>
@@ -351,7 +351,7 @@ export default function RegistrationApp() {
                      <img 
                        src={wonPrize.image_url} 
                        alt={wonPrize.name} 
-                       className="w-[80%] h-auto object-contain animate-in zoom-in spin-in-12 duration-700 " 
+                       className="w-[90%] h-auto object-contain animate-in zoom-in spin-in-12 duration-700 " 
                      />
                    ) : (
                      <Gift size={120} className="text-[#ed7426] animate-bounce" />
@@ -359,11 +359,11 @@ export default function RegistrationApp() {
                 </div>
                 
                 <div className="space-y-3 px-4">
-                 
-                  <p className="text-sm text-black font-medium text-zinc-800 bg-transparent py-2 px-4 inline-block mt-4  tracking-normal">
+                  
+                  <p className="text-sm font-black text-zinc-800 bg-transparent py-2 px-4 inline-block mt-4 uppercase tracking-wider">
                     Acércate al promotor <br />y reclama tu premio
                   </p>
-                  <p className="text-sm text-black">
+                  <p className="text-xs text-black">
                     * Imágenes referenciales
                   </p>
                 </div>

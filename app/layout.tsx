@@ -12,9 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
+
 export const metadata: Metadata = {
   title: "Frugos Back to School",
-  description: "Frugos Back to School ",
+  description: "Frugos Back to School",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
