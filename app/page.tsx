@@ -37,6 +37,9 @@ export default function RegistrationApp() {
   const [formData, setFormData] = useState({ fullName: '' })
   const [file, setFile] = useState<File | null>(null)
   
+  // ESTADO FAKE PARA EL GÉNERO (Solo Visual)
+  const [fakeGender, setFakeGender] = useState<'M' | 'F' | null>(null)
+  
   // Estado para guardar el premio ganador
   const [wonPrize, setWonPrize] = useState<any>(null)
 
@@ -129,7 +132,7 @@ export default function RegistrationApp() {
         .order('batch_number', { ascending: true });
 
       if (availablePrizes && availablePrizes.length > 0) {
-        // Encontramos cuál es el lote activo más bajo (ej. Si el lote 1 tiene stock, será 1. Si no, será 2)
+        // Encontramos cuál es el lote activo más bajo
         const lowestBatch = availablePrizes[0].batch_number;
         
         // Filtramos solo los premios que pertenecen a ese lote activo
@@ -145,11 +148,11 @@ export default function RegistrationApp() {
           .eq('id', assignedPrize.id);
       }
 
-      // 3. Registro en Base de Datos (con o sin premio asignado)
+      // 3. Registro en Base de Datos (NO INCLUYE GÉNERO, SOLO ES VISUAL)
       const { error: insertError } = await supabase.from('registrations').insert({
         full_name: formData.fullName, 
-        dni: 'N/A',   // Valor por defecto para no romper la BD que exige un DNI
-        phone: 'N/A', // Valor por defecto 
+        dni: 'N/A',   
+        phone: 'N/A',  
         email: 'registro@frugos.pe',
         voucher_url: urlData.publicUrl, 
         campaign_id: campaign.id,
@@ -184,24 +187,25 @@ export default function RegistrationApp() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-t from-[#fec698] to-[#fadec4] font-sans text-zinc-900 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
       
-      {/* Fondos Decorativos Suaves (Apple Style) */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-400/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/10 rounded-full blur-[100px] pointer-events-none"></div>
+      {/* Fondos Decorativos Suaves */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/50 p-6 sm:p-10 relative z-10 animate-in fade-in zoom-in-95 duration-500">
+      <div className="w-full max-w-md bg-transparent  rounded-[2.5rem]  p-6 sm:p-10 relative z-10 animate-in fade-in zoom-in-95 duration-500">
         
         {/* HEADER COMÚN */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-green-500 rounded-3xl mx-auto flex items-center justify-center shadow-lg shadow-green-500/30 mb-4 rotate-3">
-             <span className="text-white font-black text-3xl italic leading-none">F</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none">
-            Back to <span className="text-green-600">School</span>
-          </h1>
+          {/* LOGO FRUGOS */}
+          <img 
+            src="/logofrugos.png" 
+            alt="Logo Frugos" 
+            className="h-44 mx-auto mb-4 object-contain drop-shadow-sm"
+          />
+         
           {step === 1 && <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2">Selecciona tu sucursal para participar</p>}
-          {step === 2 && <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2">Sube tu voucher para jugar</p>}
+          {step === 2 && <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2"></p>}
         </div>
 
         {/* ALERTA GLOBAL */}
@@ -225,15 +229,15 @@ export default function RegistrationApp() {
                 <button
                   key={store.id}
                   onClick={() => { setSelectedStore(store); setStep(2); setError(''); }}
-                  className="w-full flex items-center justify-between bg-white p-5 rounded-[1.5rem] border border-zinc-100 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/10 transition-all group active:scale-95"
+                  className="w-full flex items-center justify-between bg-white p-5 rounded-[1.5rem] border border-zinc-100 hover:border-[#ed7426] hover:shadow-lg hover:shadow-[#ed7426]/10 transition-all group active:scale-95"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 group-hover:bg-green-100 group-hover:text-green-600 transition-colors">
+                    <div className="w-10 h-10 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 group-hover:bg-[#ed7426]/10 group-hover:text-[#ed7426] transition-colors">
                       <Store size={18} />
                     </div>
                     <span className="font-black text-sm uppercase tracking-tight text-zinc-800">{store.name}</span>
                   </div>
-                  <ChevronRight size={18} className="text-zinc-300 group-hover:text-green-500 transition-colors" />
+                  <ChevronRight size={18} className="text-zinc-300 group-hover:text-[#ed7426] transition-colors" />
                 </button>
               ))
             )}
@@ -252,38 +256,37 @@ export default function RegistrationApp() {
               <ArrowLeft size={12} /> Cambiar Tienda
             </button>
 
-            <div className="p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center justify-between">
-               <span className="text-[10px] font-black uppercase tracking-widest text-green-600">Tienda Seleccionada:</span>
-               <span className="text-xs font-black uppercase text-green-800">{selectedStore.name}</span>
+            <div className="p-4 bg-[#ed7426]/10 rounded-2xl border border-[#ed7426]/20 flex items-center justify-between">
+               <span className="text-[10px] font-black uppercase tracking-widest text-[#ed7426]">Tienda Seleccionada:</span>
+               <span className="text-xs font-black uppercase text-[#c25a1b]">{selectedStore.name}</span>
+               
             </div>
-
+            <span className='leading-2 text-[#ed7426] font-extrabold text-lg'>Llena con tus datos y participa <br />por fabulosos premios</span>
+            
             {/* NOMBRES Y APELLIDOS */}
-            <div className="space-y-2">
-              <label className="text-[11px] font-black text-zinc-500 ml-2 uppercase tracking-widest">Nombres y Apellidos Completos</label>
+            <div className="space-y-2 mt-4">
+              <label className="text-[16px] font-black text-[#ed7426] ml-2 tracking-wide">Nombres y Apellidos:</label>
               <input 
                 type="text" required
-                className="w-full px-6 py-5 rounded-[1.5rem] bg-white border border-zinc-200 outline-none text-zinc-800 font-bold text-base focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all shadow-sm"
-                placeholder="Ej. Juan Pérez"
+                className="w-full px-6 py-2.5 rounded-full bg-white border-2 border-black outline-none text-zinc-800 font-bold text-base focus:ring-4 focus:ring-[#ed7426]/20 focus:border-[#ed7426] transition-all shadow-sm"
+                placeholder=""
                 value={formData.fullName}
                 onChange={e => setFormData({...formData, fullName: e.target.value})}
               />
             </div>
 
-            {/* VOUCHER UPLOAD (Área Grande) */}
-            <div className="space-y-2 pt-2">
-              <label className="text-[11px] font-black text-zinc-500 ml-2 uppercase tracking-widest">Foto del Voucher</label>
-              <label className={`flex flex-col items-center justify-center w-full h-40 rounded-[1.5rem] border-2 border-dashed cursor-pointer transition-all ${file ? 'border-green-500 bg-green-50 shadow-inner' : 'border-zinc-300 bg-white hover:bg-zinc-50'}`}>
+            {/* VOUCHER UPLOAD (Estilo Pill) */}
+            <div className="space-y-2 ">
+              <label className="text-[16px] font-black text-[#ed7426] ml-2 tracking-wide">Subir Voucher:</label>
+              <label className={`flex items-left justify-left w-full px-6 py-2 rounded-full border-[3px] border-black cursor-pointer transition-all shadow-sm font-bold text-base ${file ? 'bg-[#ed7426] border-[#ed7426] text-white' : 'bg-white text-zinc-800 hover:bg-zinc-50'}`}>
                 {file ? (
-                  <div className="flex flex-col items-center text-green-600 gap-3 animate-in zoom-in duration-300">
-                    <CheckCircle2 size={40} className="text-green-500 drop-shadow-md" />
-                    <span className="text-sm font-black uppercase tracking-widest">Voucher Cargado</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={20} className="drop-shadow-md" />
+                    <span className="uppercase tracking-wide">Voucher Cargado</span>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center text-zinc-400 gap-3">
-                    <div className="p-4 bg-zinc-50 rounded-full mb-1">
-                      <Camera size={32} strokeWidth={1.5} className="text-zinc-500" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-widest">Toca para tomar foto</span>
+                  <div className="flex items-center gap-2 text-[#ed7426]">
+                    <span className="uppercase tracking-wide text-[#ed7426]">Agregar Imagen</span>
                   </div>
                 )}
                 <input 
@@ -293,12 +296,35 @@ export default function RegistrationApp() {
               </label>
             </div>
 
+            {/* SELECCIÓN DE GÉNERO (Solo visual, no se guarda en bd) */}
+            <div className="space-y-2 mt-4">
+              <label className="text-[16px] font-black text-[#ed7426] ml-2 tracking-wide">Género:</label>
+              <div className="flex gap-6 px-4 py-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
+                    {fakeGender === 'M' && <div className="w-full h-full bg-black rounded-full" />}
+                  </div>
+                  <span className="font-bold text-zinc-800 text-sm">Masculino</span>
+                  <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('M')} />
+                </label>
+                
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
+                    {fakeGender === 'F' && <div className="w-full h-full bg-black rounded-full" />}
+                  </div>
+                  <span className="font-bold text-zinc-800 text-sm">Femenino</span>
+                  <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('F')} />
+                </label>
+              </div>
+            </div>
+
             {/* SUBMIT BUTTON */}
-            <div className="pt-6">
+            <div className="pt-6 justify-center flex">
               <button 
                 type="submit" 
-                disabled={submitting || !file || !formData.fullName}
-                className="w-full py-5 bg-zinc-900 text-white rounded-[1.5rem] font-black text-lg uppercase tracking-widest hover:bg-black hover:shadow-2xl active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none flex justify-center items-center gap-3"
+                // Añadimos !fakeGender para que no se habilite sin seleccionar género
+                disabled={submitting || !file || !formData.fullName || !fakeGender}
+                className="w-60 py-3 px-12 bg-black text-white rounded-full font-black text-2xl uppercase tracking-widest hover:shadow-2xl active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none flex justify-center items-center gap-3"
               >
                 {submitting ? (
                   <>
@@ -306,7 +332,7 @@ export default function RegistrationApp() {
                   </>
                 ) : (
                   <>
-                    <Gift size={20} /> Revelar Premio
+                     Jugar
                   </>
                 )}
               </button>
@@ -320,24 +346,25 @@ export default function RegistrationApp() {
             
             {wonPrize ? (
               <>
-                <div className="w-full relative py-6">
-                   <div className="absolute inset-0 bg-green-500/20 rounded-full blur-[60px] animate-pulse"></div>
-                   <div className="relative z-10 w-48 h-48 mx-auto bg-white rounded-full shadow-2xl border-4 border-green-400 overflow-hidden flex items-center justify-center p-4">
-                      {wonPrize.image_url ? (
-                        <img src={wonPrize.image_url} alt={wonPrize.name} className="w-full h-full object-contain animate-in zoom-in spin-in-12 duration-700" />
-                      ) : (
-                        <Gift size={80} className="text-green-500 animate-bounce" />
-                      )}
-                   </div>
+                <div className="w-full relative py-1 flex justify-center">
+                   {wonPrize.image_url ? (
+                     <img 
+                       src={wonPrize.image_url} 
+                       alt={wonPrize.name} 
+                       className="w-[80%] h-auto object-contain animate-in zoom-in spin-in-12 duration-700 " 
+                     />
+                   ) : (
+                     <Gift size={120} className="text-[#ed7426] animate-bounce" />
+                   )}
                 </div>
                 
                 <div className="space-y-3 px-4">
-                  <h3 className="text-green-600 font-black uppercase tracking-widest text-xs">¡Felicidades {formData.fullName.split(' ')[0]}!</h3>
-                  <h2 className="text-4xl font-black uppercase tracking-tighter text-zinc-900 leading-none">
-                    Ganaste<br/><span className="text-green-600">{wonPrize.name}</span>
-                  </h2>
-                  <p className="text-xs font-bold text-zinc-500 bg-zinc-100 py-2 px-4 rounded-full inline-block mt-4">
-                    Acércate al módulo para reclamarlo
+                 
+                  <p className="text-sm text-black font-medium text-zinc-800 bg-transparent py-2 px-4 inline-block mt-4  tracking-normal">
+                    Acércate al promotor <br />y reclama tu premio
+                  </p>
+                  <p className="text-sm text-black">
+                    * Imágenes referenciales
                   </p>
                 </div>
               </>
@@ -353,12 +380,7 @@ export default function RegistrationApp() {
               </>
             )}
 
-            <button 
-              onClick={() => window.location.reload()}
-              className="mt-8 px-10 py-5 bg-zinc-100 text-zinc-900 rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:bg-zinc-200 active:scale-95 transition-all w-full"
-            >
-              Registrar Otro Voucher
-            </button>
+            {/* Se eliminó el botón de Registrar otro voucher */}
           </div>
         )}
 
