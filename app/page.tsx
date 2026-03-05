@@ -32,6 +32,9 @@ export default function RegistrationApp() {
   
   const [campaign, setCampaign] = useState<any>(null)
   const [stores, setStores] = useState<any[]>([])
+  
+  // Estado para la tienda seleccionada (ahora maneja el ID temporalmente y el objeto completo)
+  const [selectedStoreId, setSelectedStoreId] = useState<string>('')
   const [selectedStore, setSelectedStore] = useState<any>(null)
   
   const [formData, setFormData] = useState({ fullName: '' })
@@ -67,6 +70,10 @@ export default function RegistrationApp() {
           .order('name', { ascending: true })
         
         setStores(storeData || [])
+        // Si hay tiendas, pre-seleccionar la primera
+        if (storeData && storeData.length > 0) {
+            setSelectedStoreId(storeData[0].id)
+        }
       } catch (err: any) {
         console.error(err)
         setError('No se pudo cargar la información de la campaña.')
@@ -92,6 +99,17 @@ export default function RegistrationApp() {
         canvas.toBlob(b => resolve(new File([b!], 'voucher.webp', { type: 'image/webp' })), 'image/webp', 0.6)
       }
     })
+  }
+
+  // --- LÓGICA DE CONFIRMAR TIENDA ---
+  const handleStoreSelection = () => {
+      if (!selectedStoreId) return;
+      const store = stores.find(s => s.id === selectedStoreId);
+      if (store) {
+          setSelectedStore(store);
+          setStep(2);
+          setError('');
+      }
   }
 
   // --- LÓGICA DE ASIGNACIÓN DE PREMIO Y ENVÍO ---
@@ -216,30 +234,46 @@ export default function RegistrationApp() {
           </div>
         )}
 
-        {/* PASO 1: SELECCIÓN DE TIENDA */}
+        {/* PASO 1: SELECCIÓN DE TIENDA (COMBOBOX) */}
         {step === 1 && (
-          <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
             {stores.length === 0 ? (
               <div className="text-center py-10 text-zinc-400">
                 <Store size={40} className="mx-auto mb-3 opacity-20" />
                 <p className="font-bold text-sm">No hay tiendas disponibles</p>
               </div>
             ) : (
-              stores.map(store => (
-                <button
-                  key={store.id}
-                  onClick={() => { setSelectedStore(store); setStep(2); setError(''); }}
-                  className="w-full flex items-center justify-between bg-white p-5 rounded-[1.5rem] border border-zinc-100 hover:border-[#ed7426] hover:shadow-lg hover:shadow-[#ed7426]/10 transition-all group active:scale-95"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 group-hover:bg-[#ed7426]/10 group-hover:text-[#ed7426] transition-colors">
-                      <Store size={18} />
-                    </div>
-                    <span className="font-black text-sm uppercase tracking-tight text-zinc-800">{store.name}</span>
-                  </div>
-                  <ChevronRight size={18} className="text-zinc-300 group-hover:text-[#ed7426] transition-colors" />
-                </button>
-              ))
+              <div className="space-y-4">
+                <div className="space-y-2">
+                   <label className="text-[16px] font-black text-[#ed7426] ml-2 tracking-wide">Tienda:</label>
+                   <div className="relative">
+                       <select 
+                           className="w-full px-6 py-3 rounded-full bg-white border-2 border-black outline-none text-zinc-800 font-bold text-base focus:ring-4 focus:ring-[#ed7426]/20 focus:border-[#ed7426] transition-all shadow-sm appearance-none cursor-pointer"
+                           value={selectedStoreId}
+                           onChange={(e) => setSelectedStoreId(e.target.value)}
+                       >
+                           {stores.map(store => (
+                               <option key={store.id} value={store.id}>
+                                   {store.name}
+                               </option>
+                           ))}
+                       </select>
+                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-zinc-800">
+                           <ChevronRight size={18} className="rotate-90" />
+                       </div>
+                   </div>
+                </div>
+
+                <div className="pt-4 justify-center flex">
+                   <button 
+                       onClick={handleStoreSelection}
+                       disabled={!selectedStoreId}
+                       className="w-50 px-12 py-3 bg-black text-white rounded-full font-black text-xl uppercase tracking-widest hover:shadow-2xl active:scale-95 transition-all disabled:opacity-30 flex justify-center items-center gap-2"
+                   >
+                       Elegir <ChevronRight size={20} />
+                   </button>
+                </div>
+              </div>
             )}
           </div>
         )}
