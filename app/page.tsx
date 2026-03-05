@@ -304,15 +304,15 @@ export default function RegistrationApp() {
                   <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
                     {fakeGender === 'M' && <div className="w-full h-full bg-black rounded-full" />}
                   </div>
-                  <span className="font-bold text-zinc-800 text-sm">Masculino</span>
+                  <span className="font-bold text-[#ed7426] text-sm">Masculino</span>
                   <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('M')} />
                 </label>
                 
                 <label className="flex items-center gap-2 cursor-pointer">
                   <div className="w-5 h-5 rounded-full border-2 border-black bg-white flex items-center justify-center p-[2px]">
-                    {fakeGender === 'F' && <div className="w-full h-full bg-black rounded-full" />}
+                    {fakeGender === 'F' && <div className="w-full h-full bg-[#ed7426] rounded-full" />}
                   </div>
-                  <span className="font-bold text-zinc-800 text-sm">Femenino</span>
+                  <span className="font-bold text-[#ed7426] text-sm">Femenino</span>
                   <input type="radio" name="gender" className="hidden" onChange={() => setFakeGender('F')} />
                 </label>
               </div>
